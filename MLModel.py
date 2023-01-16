@@ -74,3 +74,11 @@ age = new_customer[0][0]
 print(age_counts[age])
 
 df.groupby('age').size()
+
+#creating a scatter plot of income vs policy_tier
+plt.scatter(df['income'], df['policy_tier'])
+plt.xlabel('Income')
+plt.ylabel('Policy Tier')
+plt.title('Income vs Policy Tier')
+
+plt.show()
