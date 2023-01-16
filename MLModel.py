@@ -81,4 +81,8 @@ plt.xlabel('Income')
 plt.ylabel('Policy Tier')
 plt.title('Income vs Policy Tier')
 
+#overlaying a single point for new customer data
+plt.scatter(new_customer[0][3], clf.predict(new_customer), c='red', marker='*', s=200)
+
 plt.show()
+
