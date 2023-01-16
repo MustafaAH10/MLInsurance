@@ -14,20 +14,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.tree import plot_tree
 from sklearn.metrics import accuracy_score
+from pandas.plotting import parallel_coordinates
 import matplotlib.pyplot as plt
+import plotly.express as px
 
 #we need to create some sample data in a csv format with parameters like age, race, gender, health history and then their respective policy tier
 df = pd.read_csv("insurance_data.csv")
 print(df)
 X = df[['age', 'gender', 'race', 'income', 'smoker', 'alcohol', 'exercise', 'risk']]
 y = df['policy_tier']
-
-from google.colab import files
-files.download('model.pkl')
-
-import pickle
-with open("model.pkl", "wb") as f:
-    pickle.dump(clf, f)
 
 #splitting the data into training and test data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
@@ -39,37 +34,109 @@ clf.fit(X_train, y_train)
 print(X_test)
 
 y_pred = clf.predict(X_test)
+print(y_pred)
+
+y_pred = clf.predict(X_test)
 
 accuracy = accuracy_score(y_test, y_pred)
 print("Accuracy of the prediction is:")
 print(accuracy * 100)
 
-print(y_pred)
-
 plt.figure(figsize=(20,10))
 plot_tree(clf, feature_names=['age', 'gender', 'race', 'income', 'smoker', 'alcohol', 'exercise', 'risk'], class_names=['1', '2', '3', '4', '5', '6', '7', '8'], filled=True);
 plt.show()
 
-new_customer = [[35, 0, 3, 5000, 0, 1, 2, 1]]
+#@title Enter Parameters { display-mode: "code" }
 
-policy_tier = clf.predict(new_customer)
+#Age
+Age = 35 #@param {type:"integer"}
 
-print("Recommended policy tier for new customer:", policy_tier[0])
+#Gender
+Gender = "Female" #@param ["Male", "Female"]
+if Gender == "Male":
+  GENDER = 1
+else:
+  GENDER = 0
 
-# Group the customers by age group
+#Race
+Race = "Malay" #@param ["Chinese", "Malay", "Indian"]
+if Race == "Chinese":
+  RACE = 2.0
+elif Race == "Malay":
+  RACE = 3.0
+else:
+  RACE = 1.0
+
+#Income
+Income = 5000 #@param {type:"integer"}
+
+#Smoker
+Smoker = False #@param {type:"boolean"}
+if Smoker == False:
+  SMOKER = 0
+else:
+  SMOKER = 1
+
+#Alcohol
+Alcohol = "Light" #@param ["Never", "Light", "Moderate", "Heavy"]
+if Alcohol == "Never":
+  ALCOHOL = 0
+elif Alcohol == "Light":
+  ALCOHOL = 1
+elif Alcohol == "Moderate":
+  ALCOHOL = 2
+else:
+  ALCOHOL = 3
+
+#Exercise
+Exercise = "Moderate" #@param ["Never", "Light", "Moderate", "Heavy"]
+if Exercise == "Never":
+  EXERCISE = 0
+elif Exercise == "Light":
+  EXERCISE = 1
+elif Exercise == "Moderate":
+  EXERCISE = 2
+else:
+  EXERCISE = 3
+
+#Risk
+Risk = "1" #@param ["1", "2", "3", "4", "5"]
+
+new_customer = [[Age, GENDER, RACE, Income, SMOKER, ALCOHOL, EXERCISE, Risk]]
+
+
+print(new_customer[0])
+new_customer_policy_tier = clf.predict(new_customer)
+print("Recommended policy tier for new customer:", new_customer_policy_tier[0])
+
+print(new_customer[0][0])
+AGE_NC = new_customer[0][0]
+
+#groups the customers by age group
 age_groups = df.groupby("age")
 
-# Calculate the proportion of customers in each age group that choose each policy tier
+#calculates the proportion of customers in each age group that choose each policy tier
 age_stats = age_groups["policy_tier"].value_counts(normalize=True)
 
-# Print the statistics for the new customer's age group
+#prints the statistics for the new customer's age group
+print(age_stats)
+
+print(new_customer[0][0])
+
+#groups the customers by age group
+age_groups = df.groupby("age")
+
+#calculates the proportion of customers in each age group that choose each policy tier
+age_stats = age_groups["policy_tier"].value_counts(normalize=True)
+
+#prints the statistics for the new customer's age group
 age = new_customer[0][0]
 print(age_stats[age])
 
-# Count the number of customers in each age group
+#counts the number of customers in each age group
 age_counts = df['age'].value_counts()
 
-# Print the counts for the new customer's age group
+#prints the counts for the new customer's age group
 age = new_customer[0][0]
 print(age_counts[age])
 
@@ -85,4 +152,3 @@ plt.title('Income vs Policy Tier')
 plt.scatter(new_customer[0][3], clf.predict(new_customer), c='red', marker='*', s=200)
 
 plt.show()
-
